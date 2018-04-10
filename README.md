@@ -11,7 +11,6 @@ Caso você não tenha feito a [Tarefa #1](https://github.com/if1001/exercicio1-r
 Siga os passos na ordem sugerida e marque mais abaixo, na sua resposta, quais os passos completados. 
 Para entregar o exercício, responda o [formulário de entrega](https://docs.google.com/forms/d/e/1FAIpQLSekCO9cBY3FepSBG3KyQasSMkZQvgS5ikN29x4KnyN9xYSj6Q/viewform) até 16/04/2018, às 23h59.
 
-Implemente a manipulação de dados nos métodos auxiliares para não ficar criando consultas manualmente
   10. A classe `SQLiteRSSHelper` já tem toda a configuração do banco. No entanto, ainda é necessário implementar os métodos de manipulação do banco de dados (da linha 73 em diante), que estão em aberto ainda. A implementação do método `getItems` deve retornar apenas os itens não lidos;
   11. Complete a implementação do método `onItemClick` (linha 74 em diante de `MainActivity`), de forma que ao clicar, o link seja aberto no navegador e a notícia seja marcada como lida no banco;
   12. Altere a aplicação de forma a usar um `Service` para fazer o download e persistência dos itens do feed no banco. Ou seja, a ideia aqui é mover o código que atualmente está no `AsyncTask` que carrega o feed a partir da internet para um `Service`. Dica: use `IntentService`;
