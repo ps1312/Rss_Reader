@@ -2,11 +2,8 @@ package br.ufpe.cin.if1001.rss.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -19,7 +16,6 @@ import java.util.List;
 
 import br.ufpe.cin.if1001.rss.db.SQLiteRSSHelper;
 import br.ufpe.cin.if1001.rss.domain.ItemRSS;
-import br.ufpe.cin.if1001.rss.ui.MainActivity;
 import br.ufpe.cin.if1001.rss.util.ParserRSS;
 
 public class DownloadXmlService extends IntentService {
@@ -27,6 +23,9 @@ public class DownloadXmlService extends IntentService {
     SQLiteRSSHelper db;
     //Mensagem do broadcast para ser usada no itentFilter
     public static final String DOWNLOAD_COMPLETE = "br.ufpe.cin.if1001.rss.action.DOWNLOAD_COMPLETE";
+
+    //Mensagem de broadcast caso exista alguma nova noticia
+    public static final String NEW_REPORT_AVAILABLE = "br.ufpe.cin.if1001.rss.NEW_REPORTS";
 
     public DownloadXmlService() {
         super("DownloadXmlService");
@@ -44,6 +43,8 @@ public class DownloadXmlService extends IntentService {
                 Log.d("DB", "Buscando no Banco por link: " + i.getLink());
                 ItemRSS item = db.getItemRSS(i.getLink());
                 if (item == null) {
+                    //Possui uma noticia nova, envia o broadcast e add no banco(ainda vai ser mudado)
+                    sendBroadcast(new Intent(NEW_REPORT_AVAILABLE));
                     Log.d("DB", "Encontrado pela primeira vez: " + i.getTitle());
                     db.insertItem(i);
                 }
