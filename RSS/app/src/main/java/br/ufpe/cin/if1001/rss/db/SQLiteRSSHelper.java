@@ -97,7 +97,7 @@ public class SQLiteRSSHelper extends SQLiteOpenHelper {
     public Cursor getItems() throws SQLException {
         //Pegar uma instancia readable
         SQLiteDatabase readableDB = db.getReadableDatabase();
-        Cursor query = readableDB.query(DATABASE_TABLE, columns, ITEM_UNREAD + " = 1", null, null, null, ITEM_DATE);
+        Cursor query = readableDB.query(DATABASE_TABLE, columns, ITEM_UNREAD + " = 1", null, null, null, ITEM_DATE + " DESC");
         //Forçar consulta
         return query;
     }
@@ -129,8 +129,6 @@ public class SQLiteRSSHelper extends SQLiteOpenHelper {
         itemRssCV.put(ITEM_UNREAD, 0);
         int hasUpdated = writableDB.update(DATABASE_TABLE, itemRssCV, ITEM_LINK + " = ?", new String[]{link});
         if (hasUpdated == 1) {
-            Log.d("AAAAAAAAAAAAAA", "TUDO CERTO MARCADO...");
-
             return true;
         } else {
             return false;
