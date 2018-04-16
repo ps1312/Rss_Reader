@@ -117,7 +117,15 @@ public class SQLiteRSSHelper extends SQLiteOpenHelper {
 
 
     public boolean markAsUnread(String link) {
-        return false;
+        SQLiteDatabase writableDB = db.getWritableDatabase();
+        ContentValues itemRssCV = new ContentValues();
+        itemRssCV.put(ITEM_UNREAD, 1);
+        int hasUpdated = writableDB.update(DATABASE_TABLE, itemRssCV, ITEM_LINK + " = ?", new String[]{link});
+        if (hasUpdated == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean markAsRead(String link) {
