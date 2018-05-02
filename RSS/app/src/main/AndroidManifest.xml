@@ -15,6 +15,12 @@
         <service android:name=".services.DownloadXmlService"
                  android:enabled="true"/>
 
+        <provider
+            android:name=".db.RssProvider"
+            android:authorities="bbr.ufpe.cin.if1001.rss.leitura"
+            android:enabled="true"
+            android:exported="true"></provider>
+
         <receiver
             android:name=".receivers.NewReportsReceiver"
             android:enabled="true"
