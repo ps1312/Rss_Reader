@@ -40,12 +40,12 @@ public class DownloadXmlService extends IntentService {
             String feed = getRssFeed(intent.getStringExtra("url"));
             items = ParserRSS.parse(feed);
             for (ItemRSS i : items) {
-                Log.d("DB", "Buscando no Banco por link: " + i.getLink());
+                //Log.d("DB", "Buscando no Banco por link: " + i.getLink());
                 ItemRSS item = db.getItemRSS(i.getLink());
                 if (item == null) {
                     //Possui uma noticia nova, envia o broadcast e add no banco(ainda vai ser mudado)
                     sendBroadcast(new Intent(NEW_REPORT_AVAILABLE));
-                    Log.d("DB", "Encontrado pela primeira vez: " + i.getTitle());
+                    //Log.d("DB", "Encontrado pela primeira vez: " + i.getTitle());
 
                     db.insertItem(i);
                 }

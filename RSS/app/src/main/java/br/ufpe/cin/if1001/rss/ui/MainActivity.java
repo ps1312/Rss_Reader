@@ -1,7 +1,10 @@
 package br.ufpe.cin.if1001.rss.ui;
 
 import android.app.Activity;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -15,11 +18,13 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import br.ufpe.cin.if1001.rss.R;
 import br.ufpe.cin.if1001.rss.db.SQLiteRSSHelper;
+import br.ufpe.cin.if1001.rss.services.DownloadJobService;
 import br.ufpe.cin.if1001.rss.services.DownloadXmlService;
 
 public class MainActivity extends Activity {
@@ -27,12 +32,16 @@ public class MainActivity extends Activity {
     private RecyclerView conteudoRSS;
     private final String RSS_FEED = "http://rss.cnn.com/rss/edition.rss";
     private SQLiteRSSHelper db;
+    private static final int JOB_ID = 1;
+    private JobScheduler jobScheduler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         db = SQLiteRSSHelper.getInstance(this);
+
+        jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
 
         conteudoRSS = findViewById(R.id.conteudoRSS);
 
@@ -52,6 +61,8 @@ public class MainActivity extends Activity {
         Intent downloadService = new Intent(getApplicationContext(), DownloadXmlService.class);
         downloadService.putExtra("url", linkfeed);
         startService(downloadService);
+
+        agendarJob();
     }
 
     @Override
@@ -115,5 +126,25 @@ public class MainActivity extends Activity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void agendarJob() {
+        Log.d("JOB SCHEDULER", "Agendando job scheduler");
+        JobInfo.Builder jobBuilder = new JobInfo.Builder(JOB_ID, new ComponentName(this, DownloadJobService.class));
+
+        //Conexao com internet necessaria
+        jobBuilder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+
+        //Realizar o download a cada n segundos de acordo com o shared prefs
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String timePeriodString = preferences.getString("rssrefreshtime", "3");
+        String[] timeNumber = timePeriodString.split(" ");
+        if (timePeriodString.contains("h")) {
+            jobBuilder.setPeriodic((Integer.valueOf(timeNumber[0]) * 60) * 60000);
+        } else {
+            jobBuilder.setPeriodic(Integer.valueOf(timeNumber[0]) * 60000);
+        }
+
+        jobScheduler.schedule(jobBuilder.build());
     }
 }
