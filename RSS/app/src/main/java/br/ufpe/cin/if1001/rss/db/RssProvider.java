@@ -3,9 +3,13 @@ package br.ufpe.cin.if1001.rss.db;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 public class RssProvider extends ContentProvider {
+
+    private SQLiteRSSHelper db;
+
     public RssProvider() {
     }
 
@@ -37,8 +41,10 @@ public class RssProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        // TODO: Implement this to handle query requests from clients.
-        throw new UnsupportedOperationException("Not yet implemented");
+
+        SQLiteDatabase readableDB = db.getReadableDatabase();
+        Cursor cursor = readableDB.query(SQLiteRSSHelper.DATABASE_TABLE, SQLiteRSSHelper.columns, selection, selectionArgs, null, null, null);
+        return cursor;
     }
 
     @Override
